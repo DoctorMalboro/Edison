@@ -376,3 +376,48 @@
     "slug": "",
     "blog_name": "lpoblet"
 }
+
+{
+    "meta": {
+        "status": 200,
+        "msg": "OK"
+    },
+    "response": {
+        "blog": {
+            "title": "Doctorado en Pascal, Python y chistes malos",
+            "name": "lpoblet",
+            "posts": 6,
+            "url": "http://lpoblet.tumblr.com/",
+            "updated": 1371875791,
+            "description": "",
+            "ask": false,
+            "ask_anon": false,
+            "is_nsfw": false,
+            "share_likes": true,
+            "likes": 0
+        },
+        "posts": [
+            {
+                "blog_name": "lpoblet",
+                "id": 53571739750,
+                "post_url": "http://lpoblet.tumblr.com/post/53571739750/si-lo-meas-no-llena",
+                "slug": "si-lo-meas-no-llena",
+                "type": "quote",
+                "date": "2013-06-22 04:36:31 GMT",
+                "timestamp": 1371875791,
+                "state": "published",
+                "format": "markdown",
+                "reblog_key": "9ZT8c9TG",
+                "tags": [
+                    "pycamp"
+                ],
+                "short_url": "http://tmblr.co/ZqX_crnv7_1c",
+                "highlighted": [],
+                "note_count": 0,
+                "text": "Si lo méas, no llena",
+                "source": "Señor de la PyCamp 2013"
+            }
+        ],
+        "total_posts": 1
+    }
+}

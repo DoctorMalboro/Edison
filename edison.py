@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 import os
 import sys
 import urllib
@@ -70,7 +70,10 @@ class Edison(object):
 				post_index['body'])
 			self.post_path = folder + 'stories/'
 			if not os.path.exists(self.post_path):
-				os.makedirs(self.post_path)			
+				os.makedirs(self.post_path)
+				os.chdir(self.post_path)
+			else:
+				os.chdir(self.post_path)			
 			self.new_post.write(self.Npost)
 			self.new_post.close()
 			# With this timer the code should be able
@@ -107,7 +110,6 @@ class Edison(object):
 				return "Impossible to create new post."
 				sys.exit(1)
 
-			print(len(post_index['tags']))
 			self.Npost = """.. link: %s
 .. description: %s 
 .. tags: %s
@@ -122,7 +124,10 @@ class Edison(object):
 
 			self.post_path = folder + 'stories/'
 			if not os.path.exists(self.post_path):
-				os.makedirs(self.post_path)			
+				os.makedirs(self.post_path)
+				os.chdir(self.post_path)
+			else:
+				os.chdir(self.post_path)			
 			self.new_post.write(self.Npost)
 			self.new_post.close()
 		else:
@@ -135,7 +140,6 @@ class Edison(object):
 					sys.exit(1)
 
 				if(post_index['title'] != ''):
-					print(len(post_index['tags']))
 					self.Npost = """.. link: %s
 .. description: %s 
 .. tags: %s
@@ -150,11 +154,13 @@ class Edison(object):
 
 				self.post_path = folder + 'stories/'
 				if not os.path.exists(self.post_path):
-					os.makedirs(self.post_path)			
+					os.makedirs(self.post_path)
+					os.chdir(self.post_path)
+				else:
+					os.chdir(self.post_path)		
 				self.new_post.write(self.Npost)
 				self.new_post.close()
 			else:
-				print(len(post_index['tags']))
 				self.Npost = """.. link: %s
 .. description: %s 
 .. tags: %s
@@ -169,13 +175,110 @@ class Edison(object):
 
 			self.post_path = folder + 'stories/'
 			if not os.path.exists(self.post_path):
-				os.makedirs(self.post_path)			
+				os.makedirs(self.post_path)
+				os.chdir(self.post_path)
+			else:
+				os.chdir(self.post_path)	
+			self.new_post.write(self.Npost)
+			self.new_post.close()
+			# With this timer the code should be able
+			# to avoid Tumblr's shutdown on its own API
+			time.sleep(3)
+			self.index = self.index + 1
+
+	def make_Nikola_quotePost(self, post_index, total, folder='tumblr/'):
+		if (total == 0):
+			return "Nothing to import."
+		elif (total == 1):
+			try:
+				self.new_post = open('%s.txt' % post_index['slug'], 'wb')
+			except IOError:
+				return "Impossible to create new post."
+				sys.exit(1)
+
+			self.quote = "%s - %s" % (post_index['text'], post_index['source'])
+			print(type(self.quote))
+			self.Npost = """.. link: %s
+.. description: %s 
+.. tags: %s
+.. date: %s
+.. title: %s
+.. slug: %s
+
+%s""" % (post_index['slug'], post_index['text'],
+			['' if len(post_index['tags']) <= 0 else post_index['tags']][0],
+			post_index['date'], post_index['text'],
+			post_index['slug'], self.quote)
+
+			self.post_path = folder + 'stories/'
+			if not os.path.exists(self.post_path):
+				os.makedirs(self.post_path)
+				os.chdir(self.post_path)
+			else:
+				os.chdir(self.post_path)
+			# self.new_post.write(self.Npost)
+			# self.new_post.close()
+		else:
+			self.index = 0
+			while (self.index != total):
+				try:
+					self.new_post = open('%s.txt' % post_index['title'], 'wb')
+				except IOError:
+					return "Impossible to create new post."
+					sys.exit(1)
+
+				if(post_index['title'] != ''):
+					self.quote = "%s - %s" % (post_index['text'],
+											  post_index['source'])
+				self.Npost = """.. link: %s
+.. description: %s 
+.. tags: %s
+.. date: %s
+.. title: %s
+.. slug: %s
+
+%s""" % (post_index['slug'], post_index['text'],
+					['' if len(post_index['tags']) <= 0 \
+						else post_index['tags']][0],
+					post_index['date'], post_index['text'],
+					post_index['slug'], self.quote)
+
+				self.post_path = folder + 'stories/'
+				if not os.path.exists(self.post_path):
+					os.makedirs(self.post_path)
+					os.chdir(self.post_path)
+				else:
+					os.chdir(self.post_path)		
+				self.new_post.write(self.Npost)
+				self.new_post.close()
+			else:
+				self.quote = "%s - %s" % (post_index['text'],
+										  post_index['source'])
+				self.Npost = """.. link: %s
+.. description: %s 
+.. tags: %s
+.. date: %s
+.. title: %s
+.. slug: %s
+
+%s""" % (post_index['slug'], post_index['text'],
+				['' if len(post_index['tags']) <= 0\
+					else post_index['tags']][0],
+				post_index['date'], post_index['text'],
+				post_index['slug'], self.quote)
+
+			self.post_path = folder + 'stories/'
+			if not os.path.exists(self.post_path):
+				os.makedirs(self.post_path)
+				os.chdir(self.post_path)
+			else:
+				os.chdir(self.post_path)
 			self.new_post.write(self.Npost)
 			self.new_post.close()
 				# With this timer the code should be able
 				# to avoid Tumblr's shutdown on its own API
 			time.sleep(3)
-			self.index = self.index + 1
+			self.index = self.index + 1		
 
 	def fetch_text_posts(self, site, key, get_type, limit=0,
 						 folder='tumblr/'):
@@ -186,7 +289,7 @@ class Edison(object):
 			after Nikola supports a basic image uploading system, or the
 			user might as well do it manually.
 		"""
-		if (get_type = 'text'):
+		if (get_type == 'text'):
 			self.text_posts = requests.get('http://api.tumblr.com/v2/'\
 				'blog/%s/posts?api_key=%s&type=%s'\
 				% (site, key, get_type))
@@ -199,9 +302,22 @@ class Edison(object):
 					'v2/blog/%s/posts?api_key=%s&type=%s&limit'\
 					% (site, key, get_type,
 					   self.text_posts['response']['total_posts']))
-			self.text_posts = simplejson.loads(simplejson\
-							  .dumps(self.text_posts))
+				self.text_posts = simplejson.loads(simplejson\
+							  		.dumps(self.text_posts))
 			self.all_text_posts = self.text_posts['response']['posts'][0]
 			self.make_Nikola_textPost(self.all_text_posts, self.total_posts)
-		elif (get_type = 'quote'):
-			pass
+		elif (get_type == 'quote'):
+			self.quote_posts = requests.get('http://api.tumblr.com/v2/'\
+				'blog/%s/posts?api_key=%s&type=%s'\
+				% (site, key, get_type))
+			self.quote_posts = self.quote_posts.json()
+			self.quote_posts = simplejson.loads(simplejson\
+								.dumps(self.quote_posts))
+			self.total_posts = self.quote_posts['response']['total_posts']
+			if limit != 0:
+				self.quote_posts = requests.get('http://api.tumblr.com/'\
+					'v2/blog/%s/posts?api_key=%s&type=%s&limit'\
+					% (site, key, get_type,
+					   self.text_posts['response']['total_posts']))
+			self.all_quote_posts = self.quote_posts['response']['posts'][0]
+			self.make_Nikola_quotePost(self.all_quote_posts, self.total_posts)
