@@ -6,7 +6,6 @@ import time
 try:
 	import requests
 	import simplejson
-	from simplejson.compat import StringIO
 except ImportError:
 	print('Error importing one of the important libraries. Please install it.')
 	sys.exit(1)
@@ -187,19 +186,22 @@ class Edison(object):
 			after Nikola supports a basic image uploading system, or the
 			user might as well do it manually.
 		"""
-		self.text_posts = requests.get('http://api.tumblr.com/v2/'\
-			'blog/%s/posts?api_key=%s&type=%s'\
-			% (site, key, get_type))
-		self.text_posts = self.text_posts.json()
-		self.text_posts = simplejson.loads(simplejson\
-						  .dumps(self.text_posts))
-		self.total_posts = self.text_posts['response']['total_posts']
-		if (limit != 0):
-			self.text_posts = requests.get('http://api.tumblr.com/'\
-				'v2/blog/%s/posts?api_key=%s&type=%s&limit'\
-				% (site, key, get_type,
-				   self.text_posts['response']['total_posts']))
-		self.text_posts = simplejson.loads(simplejson\
-						  .dumps(self.text_posts))
-		self.all_text_posts = self.text_posts['response']['posts'][0]
-		self.make_Nikola_textPost(self.all_text_posts, self.total_posts)
+		if (get_type = 'text'):
+			self.text_posts = requests.get('http://api.tumblr.com/v2/'\
+				'blog/%s/posts?api_key=%s&type=%s'\
+				% (site, key, get_type))
+			self.text_posts = self.text_posts.json()
+			self.text_posts = simplejson.loads(simplejson\
+							  .dumps(self.text_posts))
+			self.total_posts = self.text_posts['response']['total_posts']
+			if (limit != 0):
+				self.text_posts = requests.get('http://api.tumblr.com/'\
+					'v2/blog/%s/posts?api_key=%s&type=%s&limit'\
+					% (site, key, get_type,
+					   self.text_posts['response']['total_posts']))
+			self.text_posts = simplejson.loads(simplejson\
+							  .dumps(self.text_posts))
+			self.all_text_posts = self.text_posts['response']['posts'][0]
+			self.make_Nikola_textPost(self.all_text_posts, self.total_posts)
+		elif (get_type = 'quote'):
+			pass
