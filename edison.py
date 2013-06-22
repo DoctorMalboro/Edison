@@ -38,17 +38,6 @@ class Edison(object):
 		self.posts = self.posts['response']['posts']
 		return self.posts
 
-	def make_ReST(self, text):
-		try:
-			from html2rest import html2rest
-		except ImportError:
-			return "Impossible to convert."
-			sys.exit(1)
-
-		if (text != ''):
-			text = html2rest(text, "utf-8", StringIO)
-			return text
-
 	def make_Nikola_imgPost(self, post_index, total, folder='tumblr/'):
 		self.index = 0
 		while (self.index != total):
@@ -76,14 +65,14 @@ class Edison(object):
 .. slug: %s
 
 .. Image:: %s
-%s""" % (self.post['id'], self.post['caption'],
-			self.post['tags'], self.post['date'],
-			self.post['id'], self.post['slug'],
-			self.output, self.post['caption'])
+%s""" % (post_index['title'], post_index['title'],
+				post_index['tags'], post_index['date'],
+				post_index['id'], post_index['slug'],
+				post_index['body'])
 			self.post_path = folder + 'stories/'
 			if not os.path.exists(self.post_path):
 				os.makedirs(self.post_path)			
-			self.new_post.write(folder + self.Npost)
+			self.new_post.write(self.Npost)
 			self.new_post.close()
 			# With this timer the code should be able
 			# to avoid Tumblr's shutdown on its own API
@@ -119,23 +108,23 @@ class Edison(object):
 				return "Impossible to create new post."
 				sys.exit(1)
 
-			if(post_index['title'] != ''):
-				self.Npost = """.. link: %s
+			print(len(post_index['tags']))
+			self.Npost = """.. link: %s
 .. description: %s 
 .. tags: %s
 .. date: %s
 .. title: %s
 .. slug: %s
 
-%s""" % (self.post['title'], self.post['caption'],
-				self.post['tags'], self.post['date'],
-				self.post['id'], self.post['slug'],
-				make_ReST(self.post['body']))
+%s""" % (post_index['title'], post_index['title'],
+			['' if len(post_index['tags']) <= 0 else post_index['tags']][0],
+			post_index['date'], post_index['id'],
+			post_index['slug'], post_index['body'])
 
 			self.post_path = folder + 'stories/'
 			if not os.path.exists(self.post_path):
 				os.makedirs(self.post_path)			
-			self.new_post.write(folder + self.Npost)
+			self.new_post.write(self.Npost)
 			self.new_post.close()
 		else:
 			self.index = 0
@@ -147,6 +136,7 @@ class Edison(object):
 					sys.exit(1)
 
 				if(post_index['title'] != ''):
+					print(len(post_index['tags']))
 					self.Npost = """.. link: %s
 .. description: %s 
 .. tags: %s
@@ -154,20 +144,39 @@ class Edison(object):
 .. title: %s
 .. slug: %s
 
-%s""" % (self.post['title'], self.post['caption'],
-					self.post['tags'], self.post['date'],
-					self.post['id'], self.post['slug'],
-					make_ReST(self.post['body']))
+%s""" % (post_index['title'], post_index['title'],
+					post_index['tags'], post_index['date'],
+					post_index['id'], post_index['slug'],
+					post_index['body'])
 
 				self.post_path = folder + 'stories/'
 				if not os.path.exists(self.post_path):
 					os.makedirs(self.post_path)			
-				self.new_post.write(folder + self.Npost)
+				self.new_post.write(self.Npost)
 				self.new_post.close()
+			else:
+				print(len(post_index['tags']))
+				self.Npost = """.. link: %s
+.. description: %s 
+.. tags: %s
+.. date: %s
+.. title: %s
+.. slug: %s
+
+%s""" % (post_index['id'], post_index['id'],
+			['' if len(post_index['tags']) <= 0 else post_index['tags']][0],
+			post_index['date'], post_index['id'],
+			post_index['slug'], post_index['body'])
+
+			self.post_path = folder + 'stories/'
+			if not os.path.exists(self.post_path):
+				os.makedirs(self.post_path)			
+			self.new_post.write(self.Npost)
+			self.new_post.close()
 				# With this timer the code should be able
 				# to avoid Tumblr's shutdown on its own API
-				time.sleep(3)
-				self.index = self.index + 1
+			time.sleep(3)
+			self.index = self.index + 1
 
 	def fetch_text_posts(self, site, key, get_type, limit=0,
 						 folder='tumblr/'):
@@ -178,10 +187,12 @@ class Edison(object):
 			after Nikola supports a basic image uploading system, or the
 			user might as well do it manually.
 		"""
-		self.text_posts = requests.get('http://api.tumblr.com/'\
-				'v2/blog/%s/posts?api_key=%s&type=%s' % (site, key, get_type))
+		self.text_posts = requests.get('http://api.tumblr.com/v2/'\
+			'blog/%s/posts?api_key=%s&type=%s'\
+			% (site, key, get_type))
+		self.text_posts = self.text_posts.json()
 		self.text_posts = simplejson.loads(simplejson\
-						  .dumps(self.text_posts.json()))
+						  .dumps(self.text_posts))
 		self.total_posts = self.text_posts['response']['total_posts']
 		if (limit != 0):
 			self.text_posts = requests.get('http://api.tumblr.com/'\
@@ -189,6 +200,6 @@ class Edison(object):
 				% (site, key, get_type,
 				   self.text_posts['response']['total_posts']))
 		self.text_posts = simplejson.loads(simplejson\
-						  .dumps(self.text_posts.json()))
+						  .dumps(self.text_posts))
 		self.all_text_posts = self.text_posts['response']['posts'][0]
 		self.make_Nikola_textPost(self.all_text_posts, self.total_posts)
