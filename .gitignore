@@ -2,4 +2,5 @@
 *.db
 *.html
 .git/
+env/
 tumblr/
