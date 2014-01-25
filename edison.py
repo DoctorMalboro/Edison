@@ -1,12 +1,14 @@
 from __future__ import print_function, unicode_literals
 import os
 import re
+import webbrowser
 import sys
 import urllib
 import time
 try:
 	import requests
 	import simplejson
+	import soundcloud
 except ImportError:
 	print('Error importing one of the important libraries. Please install it.')
 	sys.exit(1)
@@ -74,7 +76,8 @@ class Edison(object):
 								.splitext(self.image)
 
 				# This one's cleaner than the original filename
-				self.image_name = re.sub('tumblr_.*_[0-9]+.*', '', self.image_name)
+				self.image_name = re.sub('tumblr_.*_[0-9]+.*', '',
+									self.image_name)
 				self.image_name = self.image_name.split('/')[-2]
 				self.output = self.image_name + self.image_extension
 
@@ -82,6 +85,35 @@ class Edison(object):
 
 		print('Post #',post['id'],' completed!')
 
+
+	def audio_from_tumblr(self, post):
+		self.audio_name, self.audio_extension = os.path\
+							.splitext(post['audio_url'])
+		print(self.audio_name)
+		self.audio_name = str(post['id'])
+		print(self.audio_name)
+		self.output_audio = self.audio_name + self.audio_extension
+		urllib.urlretrieve(post['audio_url'], self.output_audio)
+
+		client = soundcloud.Client(
+			client_id='58a7a68a31f68bdf4536c72f4542257d',
+			client_secret='a566853752f6f9833508c3a6097691b7',
+		)
+		webbrowser.open(urlclient.authorize_url())
+
+		track = client.post('/tracks', track={
+			'title': post['title'],
+			'asset_data': open(self.output_audio, 'rb')
+		})
+
+	def audio_from_soundcloud(self, post):
+		pass
+
+	def download_audio_posts(self, post):
+		if (post['audio_type'] == 'tumblr'):
+			self.audio_from_tumblr(post)
+		if (post['audio_type'] == 'soundcloud'):
+			self.audio_from_soundcloud(post)
 
 	def download_all_posts(self, site, key, folder="tumblr/"):
 		if not os.path.exists(folder):
@@ -99,6 +131,8 @@ class Edison(object):
 			self.index = 0
 			while (self.index != self.total_posts):
 				self.current_post = self.posts_content[self.index]
+				if (self.current_post['type'] == 'audio'):
+					self.download_audio_posts(self.current_post)
 				if (self.current_post['type'] == 'photo'):
 					self.download_image_posts(self.current_post)
 				if (self.current_post['type'] == 'text'):
