@@ -13,7 +13,7 @@ def main():
 	blog_url = raw_input('Insert blog URL (without the .tumblr.com): ')
 	print('\n\n')
 
-	convert.download_all_posts(blog_url, 'RhuQFqBllfWp7P77FEEcKFzoWkqt2AWyHAt4znyriCxlSTBfft')
+	convert.download_all_posts(blog_url, '')
 
 	print("\n\nDone! Enjoy your Nikola website!")
 
