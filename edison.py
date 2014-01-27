@@ -48,7 +48,7 @@ class Edison(object):
 \r
 %s""" % (str(post['slug']), post['title'],
 				['' if len(post['tags']) <= 0 else post['tags']][0][0],
-				post['date'], post['id'],
+				post['date'], post['title'],
 				post['slug'], re.sub('<[^<]+?>', '', post['body']).decode())
 
 		self.new_post.write(self.Npost)
