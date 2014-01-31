@@ -58,17 +58,45 @@ class Edison(object):
 
 	def download_image_posts(self, post):
 		print('Downloading image post #',post['id'],'...')
+
+		image_posts = ''
+
 		if (len(post['photos']) == 1):
 			self.image = post['photos'][0]['original_size']['url']
 			self.image_name, self.image_extension = os.path\
 							.splitext(self.image)
 
-			# This one's cleaner than the original filename
 			self.image_name = re.sub('tumblr_.*_[0-9]+.*', '', self.image_name)
 			self.image_name = self.image_name.split('/')[-2]
 			self.output = self.image_name + self.image_extension
 
 			urllib.urlretrieve(self.image, '%s' % (self.output))
+
+			image_posts = '\r.. image:: %s' % self.output
+
+			try:
+				self.new_post = open('%s.rst' % post['id'], 'wb')
+			except IOError:
+				return "Impossible to create new post."
+				sys.exit(1)
+
+			self.Npost = """.. link: %s\r
+.. description: %s\r
+.. tags: \r
+.. date: %s\r
+.. title: %s\r
+.. slug: %s\r
+.. type: text\r
+\r
+%s\r
+
+%s""" % (post['slug'], post['slug'],
+				post['date'], post['id'],
+				post['id'], image_posts,
+				post['caption'])
+
+			self.new_post.write(self.Npost)
+			self.new_post.close()
 
 		if (len(post['photos']) > 1):
 			for photoset in post['photos']:
@@ -82,7 +110,34 @@ class Edison(object):
 				self.image_name = self.image_name.split('/')[-2]
 				self.output = self.image_name + self.image_extension
 
-				urllib.urlretrieve(self.image, '%s' % (self.output))				
+				urllib.urlretrieve(self.image, '%s' % (self.output))		
+
+				image_posts += '\r.. image:: %s' % '/galleries/' + self.output
+
+			try:
+				self.new_post = open('%s.rst' % post['id'], 'wb')
+			except IOError:
+				return "Impossible to create new post."
+				sys.exit(1)
+
+			self.Npost = """.. link: %s\r
+.. description: %s\r
+.. tags: \r
+.. date: %s\r
+.. title: %s\r
+.. slug: %s\r
+.. type: text\r
+\r
+%s\r
+
+%s""" % (post['slug'], post['slug'],
+				post['date'], post['id'],
+				post['id'], image_posts,
+				post['caption'])
+
+			self.new_post.write(self.Npost)
+			self.new_post.close()
+
 
 		print('Post #',post['id'],' completed!')
 
