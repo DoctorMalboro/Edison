@@ -7,7 +7,6 @@ import urllib
 import time
 try:
 	import requests
-	import simplejson
 	import soundcloud
 except ImportError:
 	print('Error importing one of the important libraries. Please install it.')
