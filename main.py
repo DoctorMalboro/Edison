@@ -3,7 +3,7 @@ from edison import Edison
 import json
 
 # Use for personal use, do not push with this on True
-DEBUG = True
+DEBUG = False
 
 def main():
 
