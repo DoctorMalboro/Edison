@@ -45,6 +45,7 @@ class Edison(object):
 .. type: text\r
 \r
 %s""" % (str(post['slug']), post['title'],
+<<<<<<< HEAD
                 ['' if len(post['tags']) == 0 else post['tags']],
                 post['date'], post['title'],
                 post['slug'], re.sub('<[^<]+?>', '', post['body']).decode())
@@ -52,6 +53,15 @@ class Edison(object):
         self.new_post.write(self.Npost)
         self.new_post.close()
         print('Post #',post['id'],' completed!')
+=======
+				['' if len(post['tags']) <= 0 else post['tags']][0][0],
+				post['date'], post['title'],
+				post['slug'], re.sub('<[^<]+?>', '', post['body']))
+
+		self.new_post.write(self.Npost.encode("utf-8"))
+		self.new_post.close()
+		print('Post #',post['id'],' completed!')
+>>>>>>> 29535a31232ae6e4982ac395e96746484c3663a6
 
 
     def download_image_posts(self, post):
@@ -93,8 +103,13 @@ class Edison(object):
                 post['id'], image_posts,
                 post['caption'])
 
+<<<<<<< HEAD
             self.new_post.write(self.Npost)
             self.new_post.close()
+=======
+			self.new_post.write(self.Npost.encode("utf-8"))
+			self.new_post.close()
+>>>>>>> 29535a31232ae6e4982ac395e96746484c3663a6
 
         if (len(post['photos']) > 1):
             for photoset in post['photos']:
@@ -129,6 +144,7 @@ class Edison(object):
 %s\r
 
 %s""" % (post['slug'], post['slug'],
+<<<<<<< HEAD
                 post['date'], post['id'],
                 post['id'], image_posts,
                 post['caption'])
@@ -177,6 +193,56 @@ class Edison(object):
 
         if (post['caption'] != ''):
             self.Npost = """.. link: %s\r
+=======
+				post['date'], post['id'],
+				post['id'], image_posts,
+				post['caption'])
+
+			self.new_post.write(self.Npost.encode("utf-8"))
+			self.new_post.close()
+
+
+		print('Post #',post['id'],' completed!')
+
+
+	def audio_from_tumblr(self, post):
+		"""
+		THIS FUNCIONALITY IS COMPLETELY EXPERIMENTAL!!!
+		USE ONLY FOR TESTING PURPOSES!!!
+		"""
+		self.audio_name, self.audio_extension = os.path\
+							.splitext(post['audio_url'])
+		print(self.audio_name)
+		self.audio_name = str(post['id'])
+		print(self.audio_name)
+		self.output_audio = self.audio_name + self.audio_extension
+		urllib.urlretrieve(post['audio_url'], self.output_audio)
+
+		client = soundcloud.Client(
+			client_id='',
+			client_secret='',
+		)
+		webbrowser.open(urlclient.authorize_url())
+
+		track = client.post('/tracks', track={
+			'title': post['title'],
+			'asset_data': open(self.output_audio, 'rb')
+		})
+
+	def audio_from_soundcloud(self, post):
+		print('Downloading audio post #',post['id'],'...')
+		current_url = re.findall(r'[0-9]+', post['audio_url'])[0]
+		slug_name = re.sub(r'\s+', '-', post['track_name'])
+
+		try:
+			self.new_post = open('%s.rst' % slug_name, 'wb')
+		except IOError:
+			return "Impossible to create new post."
+			sys.exit(1)
+
+		if (post['caption'] != ''):
+			self.Npost = """.. link: %s\r
+>>>>>>> 29535a31232ae6e4982ac395e96746484c3663a6
 .. description: %s\r
 .. tags: \r
 .. date: %s\r
@@ -204,8 +270,13 @@ class Edison(object):
                 post['date'], post['id'],
                 post['track_name'], current_url)            
 
+<<<<<<< HEAD
         self.new_post.write(self.Npost)
         self.new_post.close()
+=======
+		self.new_post.write(self.Npost.encode("utf-8"))
+		self.new_post.close()
+>>>>>>> 29535a31232ae6e4982ac395e96746484c3663a6
 
         print('Post #',post['id'],' completed!')
 
@@ -214,12 +285,25 @@ class Edison(object):
             self.audio_from_soundcloud(post)
 
 
+<<<<<<< HEAD
     def download_video_posts(self, post):
         print('Downloading video post #',post['id'],'...')
         video_id = re.findall(
             "#(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=v\/)[^&\n]" \
             + "+(?=\?)|(?<=v=)[^&\n]+|(?<=youtu.be/)[^&\n]+#",
             post['permalink_url'])[0]
+=======
+	def download_video_posts(self, post):
+		print('Downloading video post #',post['id'],'...')
+		youtubeID = re.findall(
+			"#(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=v\/)[^&\n]" \
+			+ "+(?=\?)|(?<=v=)[^&\n]+|(?<=youtu.be/)[^&\n]+#",
+			post['permalink_url'])
+		isYoutube = False
+		if len(youtubeID) > 0:
+			video_id = youtubeID[0]
+			isYoutube = True
+>>>>>>> 29535a31232ae6e4982ac395e96746484c3663a6
 
 
         try:
@@ -228,8 +312,27 @@ class Edison(object):
             return "Impossible to create new post."
             sys.exit(1)
 
+<<<<<<< HEAD
         if (post['caption'] != ''):
             self.Npost = """.. link: %s\r
+=======
+		if not isYoutube:
+			self.Npost = """.. link: %s\r
+.. description: %s\r
+.. tags: \r
+.. date: %s\r
+.. title: %s\r
+.. slug: %s\r
+.. type: text\r
+\r
+
+%s""" % (post['id'], post['id'],
+				post['date'], post['permalink_url'],
+				post['id'], post['caption'])
+
+		elif (post['caption'] != ''):
+			self.Npost = """.. link: %s\r
+>>>>>>> 29535a31232ae6e4982ac395e96746484c3663a6
 .. description: %s\r
 .. tags: \r
 .. date: %s\r
@@ -254,6 +357,7 @@ class Edison(object):
 .. type: text\r
 \r
 .. youtube:: %s""" % (post['id'], post['permalink_url'],
+<<<<<<< HEAD
                 post['date'], post['id'],
                 post['id'], video_id)           
 
@@ -287,3 +391,38 @@ class Edison(object):
                 if (self.current_post['type'] == 'text'):
                     self.download_text_posts(self.current_post)
                 self.index = self.index + 1
+=======
+				post['date'], post['id'],
+				post['id'], video_id)			
+
+		self.new_post.write(self.Npost.encode("utf-8"))
+		self.new_post.close()
+
+		print('Post #',post['id'],' completed!')
+
+	def download_all_posts(self, site, key, folder="tumblr/"):
+		self.start(site, key)
+		if not os.path.exists(folder):
+			os.makedirs(folder)
+			os.chdir(folder)
+		else:
+			os.chdir(folder)
+		self.posts = requests.get('http://api.tumblr.com' \
+			'/v2/blog/%s.tumblr.com/posts/?api_key=%s' % (site, key))
+		if (self.posts.status_code == 200):
+			self.posts = self.posts.json()
+			self.total_posts = self.posts['response']['total_posts']
+			self.posts_content = self.posts['response']['posts']
+			self.index = 0
+			while (self.index != self.total_posts):
+				self.current_post = self.posts_content[self.index]
+				if (self.current_post['type'] == 'video'):
+					self.download_video_posts(self.current_post)
+				if (self.current_post['type'] == 'audio'):
+					self.download_audio_posts(self.current_post)
+				if (self.current_post['type'] == 'photo'):
+					self.download_image_posts(self.current_post)
+				if (self.current_post['type'] == 'text'):
+					self.download_text_posts(self.current_post)
+				self.index = self.index + 1
+>>>>>>> 29535a31232ae6e4982ac395e96746484c3663a6
