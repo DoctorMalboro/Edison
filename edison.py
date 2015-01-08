@@ -48,9 +48,9 @@ class Edison(object):
 %s""" % (str(post['slug']), post['title'],
 				['' if len(post['tags']) <= 0 else post['tags']][0][0],
 				post['date'], post['title'],
-				post['slug'], re.sub('<[^<]+?>', '', post['body']).decode())
+				post['slug'], re.sub('<[^<]+?>', '', post['body']))
 
-		self.new_post.write(self.Npost)
+		self.new_post.write(self.Npost.encode("utf-8"))
 		self.new_post.close()
 		print('Post #',post['id'],' completed!')
 
@@ -94,7 +94,7 @@ class Edison(object):
 				post['id'], image_posts,
 				post['caption'])
 
-			self.new_post.write(self.Npost)
+			self.new_post.write(self.Npost.encode("utf-8"))
 			self.new_post.close()
 
 		if (len(post['photos']) > 1):
@@ -134,7 +134,7 @@ class Edison(object):
 				post['id'], image_posts,
 				post['caption'])
 
-			self.new_post.write(self.Npost)
+			self.new_post.write(self.Npost.encode("utf-8"))
 			self.new_post.close()
 
 
@@ -205,7 +205,7 @@ class Edison(object):
 				post['date'], post['id'],
 				post['track_name'], current_url)			
 
-		self.new_post.write(self.Npost)
+		self.new_post.write(self.Npost.encode("utf-8"))
 		self.new_post.close()
 
 		print('Post #',post['id'],' completed!')
@@ -258,7 +258,7 @@ class Edison(object):
 				post['date'], post['id'],
 				post['id'], video_id)			
 
-		self.new_post.write(self.Npost)
+		self.new_post.write(self.Npost.encode("utf-8"))
 		self.new_post.close()
 
 		print('Post #',post['id'],' completed!')
