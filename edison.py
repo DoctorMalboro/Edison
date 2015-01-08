@@ -48,9 +48,9 @@ class Edison(object):
 %s""" % (str(post['slug']), post['title'],
 				['' if len(post['tags']) <= 0 else post['tags']][0][0],
 				post['date'], post['title'],
-				post['slug'], re.sub('<[^<]+?>', '', post['body']).decode())
+				post['slug'], re.sub('<[^<]+?>', '', post['body']))
 
-		self.new_post.write(self.Npost)
+		self.new_post.write(self.Npost.encode("utf-8"))
 		self.new_post.close()
 		print('Post #',post['id'],' completed!')
 
@@ -94,7 +94,7 @@ class Edison(object):
 				post['id'], image_posts,
 				post['caption'])
 
-			self.new_post.write(self.Npost)
+			self.new_post.write(self.Npost.encode("utf-8"))
 			self.new_post.close()
 
 		if (len(post['photos']) > 1):
@@ -134,7 +134,7 @@ class Edison(object):
 				post['id'], image_posts,
 				post['caption'])
 
-			self.new_post.write(self.Npost)
+			self.new_post.write(self.Npost.encode("utf-8"))
 			self.new_post.close()
 
 
@@ -205,7 +205,7 @@ class Edison(object):
 				post['date'], post['id'],
 				post['track_name'], current_url)			
 
-		self.new_post.write(self.Npost)
+		self.new_post.write(self.Npost.encode("utf-8"))
 		self.new_post.close()
 
 		print('Post #',post['id'],' completed!')
@@ -217,10 +217,14 @@ class Edison(object):
 
 	def download_video_posts(self, post):
 		print('Downloading video post #',post['id'],'...')
-		video_id = re.findall(
+		youtubeID = re.findall(
 			"#(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=v\/)[^&\n]" \
 			+ "+(?=\?)|(?<=v=)[^&\n]+|(?<=youtu.be/)[^&\n]+#",
-			post['permalink_url'])[0]
+			post['permalink_url'])
+		isYoutube = False
+		if len(youtubeID) > 0:
+			video_id = youtubeID[0]
+			isYoutube = True
 
 
 		try:
@@ -229,7 +233,21 @@ class Edison(object):
 			return "Impossible to create new post."
 			sys.exit(1)
 
-		if (post['caption'] != ''):
+		if not isYoutube:
+			self.Npost = """.. link: %s\r
+.. description: %s\r
+.. tags: \r
+.. date: %s\r
+.. title: %s\r
+.. slug: %s\r
+.. type: text\r
+\r
+
+%s""" % (post['id'], post['id'],
+				post['date'], post['permalink_url'],
+				post['id'], post['caption'])
+
+		elif (post['caption'] != ''):
 			self.Npost = """.. link: %s\r
 .. description: %s\r
 .. tags: \r
@@ -258,7 +276,7 @@ class Edison(object):
 				post['date'], post['id'],
 				post['id'], video_id)			
 
-		self.new_post.write(self.Npost)
+		self.new_post.write(self.Npost.encode("utf-8"))
 		self.new_post.close()
 
 		print('Post #',post['id'],' completed!')
