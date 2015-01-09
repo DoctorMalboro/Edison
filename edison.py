@@ -1,16 +1,12 @@
 from __future__ import print_function, unicode_literals
-import os
-import re
-import webbrowser
-import sys
-import urllib
-import time
+import os, re, sys
+import webbrowser, urllib, time
 try:
     import requests
     import soundcloud
 except ImportError:
-    print('Error importing one of the important libraries. Please install it.')
-    sys.exit(1)
+    raise ImportError('Error importing one of the important libraries.'
+        'Please install it.')
 
 class Edison(object):
     """docstring for Edison"""
@@ -25,8 +21,7 @@ class Edison(object):
                 '\nBlog URL: ', self.meta['response']['blog']['url'], \
                 '\nStarting Conversion....\n\n')
         else:
-            print('Error!')
-            sys.exit(1)
+            raise IOError('Could not connect.')
 
 
     def download_text_posts(self, post):
@@ -34,8 +29,7 @@ class Edison(object):
         try:
             self.new_post = open('%s.rst' % post['slug'], 'wb')
         except IOError:
-            return "Impossible to create new post."
-            sys.exit(1)
+            raise IOError("Impossible to create new post.")
 
         self.Npost = """.. link: %s\r
 .. description: %s\r
@@ -76,8 +70,7 @@ class Edison(object):
             try:
                 self.new_post = open('%s.rst' % post['id'], 'wb')
             except IOError:
-                return "Impossible to create new post."
-                sys.exit(1)
+                raise IOError("Impossible to create new post.")
 
             self.Npost = """.. link: %s\r
 .. description: %s\r
@@ -115,8 +108,7 @@ class Edison(object):
             try:
                 self.new_post = open('%s.rst' % post['id'], 'wb')
             except IOError:
-                return "Impossible to create new post."
-                sys.exit(1)
+                raise IOError("Impossible to create new post.")
 
             self.Npost = """.. link: %s\r
 .. description: %s\r
@@ -172,8 +164,7 @@ class Edison(object):
         try:
             self.new_post = open('%s.rst' % slug_name, 'wb')
         except IOError:
-            return "Impossible to create new post."
-            sys.exit(1)
+            raise IOError("Impossible to create new post.")
 
         if (post['caption'] != ''):
             self.Npost = """.. link: %s\r
@@ -225,8 +216,7 @@ class Edison(object):
         try:
             self.new_post = open('%s.rst' % post['id'], 'wb')
         except IOError:
-            return "Impossible to create new post."
-            sys.exit(1)
+            raise IOError("Impossible to create new post.")
         if not isYoutube:
             self.Npost = """.. link: %s\r
 .. description: %s\r
