@@ -290,8 +290,6 @@ class Edison(object):
                 if (self.current_post['type'] == 'text'):
                     self.download_text_posts(self.current_post)
                 self.index = self.index + 1
-                post['date'], post['id'],
-                post['id'], video_id)           
 
         self.new_post.write(self.Npost.encode("utf-8"))
         self.new_post.close()
